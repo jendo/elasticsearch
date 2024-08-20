@@ -22,6 +22,21 @@ services:
     depends_on:
       - db
 
+  elasticsearch:
+    build:
+      context: ./docker
+      dockerfile: elasticsearch/Dockerfile
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD_FILE=/run/secrets/bootstrapPassword.txt
+    volumes:
+      - ./data/es:/usr/share/elasticsearch/data
+      - ./config/es/bootstrapPassword.txt:/run/secrets/bootstrapPassword.txt
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+
   db:
     image: mariadb:10.3.30-focal
     restart: always
